@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QR Generator</title>
+  </head>
+  <body>
+    <main class="page">
+      <section class="card">
+        <h1>QR Code Generator</h1>
+        <p class="subtitle">Create a QR code from text or a URL, then download it as SVG or PNG.</p>
+
+        <label for="qr-input">Text or URL</label>
+        <textarea
+          id="qr-input"
+          placeholder="https://example.com or any text"
+          rows="4"
+        ></textarea>
+
+        <div class="actions">
+          <button id="generate-btn" type="button">Generate</button>
+          <button id="download-svg-btn" type="button" disabled>Download SVG</button>
+          <button id="download-png-btn" type="button" disabled>Download PNG</button>
+        </div>
+
+        <div class="result">
+          <div id="qr-preview" aria-live="polite"></div>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
