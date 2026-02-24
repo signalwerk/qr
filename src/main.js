@@ -4,6 +4,8 @@ import QRCode from "qrcode";
 const input = document.querySelector("#qr-input");
 const downloadSvgButton = document.querySelector("#download-svg-btn");
 const downloadPngButton = document.querySelector("#download-png-btn");
+const transparentBackgroundCheckbox = document.querySelector("#transparent-bg");
+const noMarginCheckbox = document.querySelector("#no-margin");
 const preview = document.querySelector("#qr-preview");
 
 let latestSvg = "";
@@ -41,6 +43,18 @@ function showLoading() {
     '<div class="loading"><span class="spinner" aria-hidden="true"></span><p class="hint">Generating QR code...</p></div>';
 }
 
+function getQrOptions() {
+  return {
+    errorCorrectionLevel: "M",
+    margin: noMarginCheckbox.checked ? 0 : 1,
+    width: 320,
+    color: {
+      dark: "#000000FF",
+      light: transparentBackgroundCheckbox.checked ? "#0000" : "#FFFFFFFF",
+    },
+  };
+}
+
 async function generateQr(value, version) {
   if (!value) {
     showHint();
@@ -48,11 +62,7 @@ async function generateQr(value, version) {
   }
 
   try {
-    const options = {
-      errorCorrectionLevel: "M",
-      margin: 1,
-      width: 320,
-    };
+    const options = getQrOptions();
 
     latestSvg = await QRCode.toString(value, { ...options, type: "svg" });
     latestPngDataUrl = await QRCode.toDataURL(value, {
@@ -125,5 +135,7 @@ input.addEventListener("keydown", (event) => {
 });
 
 input.addEventListener("input", scheduleGenerate);
+transparentBackgroundCheckbox.addEventListener("change", scheduleGenerate);
+noMarginCheckbox.addEventListener("change", scheduleGenerate);
 
 showHint();

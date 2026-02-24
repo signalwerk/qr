@@ -3,6 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.signalwerk.ch/css/latest/family=Work+Sans:ital,wght@0,100..900;1,100..900.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.signalwerk.ch/css/latest/family=IBM+Plex+Mono:ital,wght@0,400..700;1,400..700.css"
+      rel="stylesheet"
+    />
     <title>QR Generator</title>
   </head>
   <body>
@@ -18,6 +26,17 @@
           rows="4"
         ></textarea>
 
+        <div class="options">
+          <label class="option" for="transparent-bg">
+            <input id="transparent-bg" type="checkbox" />
+            Transparent background
+          </label>
+          <label class="option" for="no-margin">
+            <input id="no-margin" type="checkbox" />
+            Remove margin
+          </label>
+        </div>
+
         <div class="actions">
           <button id="download-svg-btn" type="button" disabled>Download SVG</button>
           <button id="download-png-btn" type="button" disabled>Download PNG</button>
@@ -26,6 +45,15 @@
         <div class="result">
           <div id="qr-preview" aria-live="polite"></div>
         </div>
+
+        <footer class="footer">
+          <small>
+            Source:
+            <a href="https://github.com/signalwerk/qr" target="_blank" rel="noopener noreferrer">
+              github.com/signalwerk/qr
+            </a>
+          </small>
+        </footer>
       </section>
     </main>
     <script type="module" src="/src/main.js"></script>
