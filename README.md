@@ -25,4 +25,4 @@ Repository settings required:
 2. Set **Source** to **GitHub Actions**.
 3. Push to `main` to trigger deployment.
 
-The Vite `base` path is configured automatically for GitHub Actions builds using the repository name.
+The app is configured for root-domain hosting (`/`) and includes `public/CNAME` set to `qr.signalwerk.ch`.
