@@ -2,13 +2,14 @@ import "./style.css";
 import QRCode from "qrcode";
 
 const input = document.querySelector("#qr-input");
-const generateButton = document.querySelector("#generate-btn");
 const downloadSvgButton = document.querySelector("#download-svg-btn");
 const downloadPngButton = document.querySelector("#download-png-btn");
 const preview = document.querySelector("#qr-preview");
 
 let latestSvg = "";
 let latestPngDataUrl = "";
+let debounceTimer;
+let requestVersion = 0;
 
 function setDownloadState(enabled) {
   downloadSvgButton.disabled = !enabled;
@@ -24,15 +25,25 @@ function downloadFile(url, filename) {
   link.remove();
 }
 
-async function generateQr() {
-  const value = input.value.trim();
+function resetGeneratedData() {
+  latestSvg = "";
+  latestPngDataUrl = "";
+  setDownloadState(false);
+}
 
+function showHint() {
+  preview.innerHTML =
+    '<p class="hint">Enter text or a URL to generate a QR code.</p>';
+}
+
+function showLoading() {
+  preview.innerHTML =
+    '<div class="loading"><span class="spinner" aria-hidden="true"></span><p class="hint">Generating QR code...</p></div>';
+}
+
+async function generateQr(value, version) {
   if (!value) {
-    preview.innerHTML =
-      '<p class="hint">Enter text or a URL to generate a QR code.</p>';
-    latestSvg = "";
-    latestPngDataUrl = "";
-    setDownloadState(false);
+    showHint();
     return;
   }
 
@@ -49,17 +60,50 @@ async function generateQr() {
       type: "image/png",
     });
 
+    if (version !== requestVersion) return;
+
     preview.innerHTML = latestSvg;
     setDownloadState(true);
   } catch (error) {
+    if (version !== requestVersion) return;
     preview.innerHTML = `<p class="error">Could not generate QR code: ${error.message}</p>`;
-    latestSvg = "";
-    latestPngDataUrl = "";
-    setDownloadState(false);
+    resetGeneratedData();
   }
 }
 
-generateButton.addEventListener("click", generateQr);
+function scheduleGenerate() {
+  const value = input.value.trim();
+  requestVersion += 1;
+  const version = requestVersion;
+  clearTimeout(debounceTimer);
+  resetGeneratedData();
+
+  if (!value) {
+    showHint();
+    return;
+  }
+
+  showLoading();
+  debounceTimer = setTimeout(() => {
+    generateQr(value, version);
+  }, 300);
+}
+
+function generateNow() {
+  const value = input.value.trim();
+  requestVersion += 1;
+  const version = requestVersion;
+  clearTimeout(debounceTimer);
+  resetGeneratedData();
+
+  if (!value) {
+    showHint();
+    return;
+  }
+
+  showLoading();
+  generateQr(value, version);
+}
 
 downloadSvgButton.addEventListener("click", () => {
   if (!latestSvg) return;
@@ -76,9 +120,10 @@ downloadPngButton.addEventListener("click", () => {
 
 input.addEventListener("keydown", (event) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
-    generateQr();
+    generateNow();
   }
 });
 
-preview.innerHTML =
-  '<p class="hint">Enter text or a URL to generate a QR code.</p>';
+input.addEventListener("input", scheduleGenerate);
+
+showHint();
