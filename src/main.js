@@ -7,6 +7,7 @@ const downloadPngButton = document.querySelector("#download-png-btn");
 const transparentBackgroundCheckbox = document.querySelector("#transparent-bg");
 const noMarginCheckbox = document.querySelector("#no-margin");
 const preview = document.querySelector("#qr-preview");
+const result = document.querySelector(".result");
 
 let latestSvg = "";
 let latestPngDataUrl = "";
@@ -41,6 +42,13 @@ function showHint() {
 function showLoading() {
   preview.innerHTML =
     '<div class="loading"><span class="spinner" aria-hidden="true"></span><p class="hint">Generating QR code...</p></div>';
+}
+
+function syncPreviewSurface() {
+  result.classList.toggle(
+    "transparent-mode",
+    transparentBackgroundCheckbox.checked,
+  );
 }
 
 function getQrOptions() {
@@ -135,7 +143,11 @@ input.addEventListener("keydown", (event) => {
 });
 
 input.addEventListener("input", scheduleGenerate);
-transparentBackgroundCheckbox.addEventListener("change", scheduleGenerate);
+transparentBackgroundCheckbox.addEventListener("change", () => {
+  syncPreviewSurface();
+  scheduleGenerate();
+});
 noMarginCheckbox.addEventListener("change", scheduleGenerate);
 
+syncPreviewSurface();
 showHint();
